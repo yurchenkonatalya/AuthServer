@@ -2,6 +2,7 @@ package com.example.security.jwt;
 
 import com.example.model.User;
 import com.example.model.UserRole;
+import com.example.model.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -14,10 +15,13 @@ public final class JwtUserFactory {
     }
 
     public static JwtUser create(User user) {
-        return new JwtUser(user.getUsername(), user.getPassword(), user.getStatus(), mapToGrantedAuthorities(new ArrayList<>(user.getRoles())));
+        return new JwtUser(
+                user.getUsername(),
+                user.getPassword(),
+                mapToGrantedAuthorities(new ArrayList<>(user.getRoles())));
     }
 
     private static List<GrantedAuthority> mapToGrantedAuthorities(List<UserRole> roles) {
-        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toList());
+        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
 }

@@ -10,18 +10,15 @@ public class JwtUser implements UserDetails {
 
     private final String username;
     private final String password;
-    private final UserStatus userStatus;
     private final Collection<? extends GrantedAuthority> authorities;
 
     public JwtUser(
             String username,
             String password,
-            UserStatus userStatus,
             Collection<? extends GrantedAuthority> authorities
     ){
         this.username = username;
         this.password = password;
-        this.userStatus = userStatus;
         this.authorities = authorities;
     }
 

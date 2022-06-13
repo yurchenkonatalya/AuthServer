@@ -42,10 +42,8 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-
-
     public String getUsername(String token){
-        return (String) getBody(token).get("username");
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
     public boolean validateToken(String token){
         try{
@@ -54,13 +52,13 @@ public class JwtTokenProvider {
                 return false;
             return true;
         }catch (JwtException | IllegalArgumentException e){
-            throw new JwtAuthenticationException("Jwt token is expired or invaled");
+            throw new JwtAuthenticationException("Jwt token is expired or invalid");
         }
     }
 
     public String resolveToken(HttpServletRequest req){
         String bearerToken = req.getHeader("Authorization");
-        if (bearerToken != null || bearerToken.startsWith("Bearer_")){
+        if (bearerToken != null && bearerToken.startsWith("Bearer_")){
             return bearerToken.substring(7, bearerToken.length());
         }
         return null;
@@ -73,15 +71,9 @@ public class JwtTokenProvider {
     private List<String> getRoleNames(List<UserRole> roles){
         List<String> res = new ArrayList<>();
         roles.forEach(role ->{
-            res.add(role.getRoleName());
+            res.add(role.getName());
         });
         return res;
     }
 
-    private Claims getBody(String token){
-        return Jwts.parserBuilder()
-                .setSigningKey(secret)
-                .build().parseClaimsJws(token)
-                .getBody();
-    }
 }

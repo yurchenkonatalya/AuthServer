@@ -10,7 +10,7 @@ import java.util.List;
 @Table(name = "roles")
 public class UserRole extends Base{
     @Column(name = "name")
-    private String roleName;
+    private String name;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private List<User> users;
