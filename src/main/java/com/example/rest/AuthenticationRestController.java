@@ -40,7 +40,7 @@ public class AuthenticationRestController {
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto){
         try{
             String username = requestDto.getUsername();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
+//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
 //            List roles = new ArrayList<>();
 //            roles.add("ADMIN");
 //            roles.add("USER");
