@@ -4,10 +4,12 @@ import com.example.model.UserRole;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +26,6 @@ public class JwtTokenProvider {
 
     @Autowired
     private UserDetailsService userDetailsService;
-
 
     public String createToken (String userName, List<UserRole> roles){
         Claims claims  = Jwts.claims().setSubject(userName);
@@ -53,7 +54,7 @@ public class JwtTokenProvider {
                 return false;
             return true;
         }catch (JwtException | IllegalArgumentException e){
-            throw new JwtAuthenticationException("Jwt toren is expired or invaled");
+            throw new JwtAuthenticationException("Jwt token is expired or invaled");
         }
     }
 

@@ -8,11 +8,11 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-public class JwtFilter extends GenericFilter {
+public class JwtTokenFilter extends GenericFilter {
     private final JwtTokenProvider tokenProvider;
 
     @Autowired
-    public JwtFilter(JwtTokenProvider tokenProvider){
+    public JwtTokenFilter(JwtTokenProvider tokenProvider){
         this.tokenProvider = tokenProvider;
     }
     @Override

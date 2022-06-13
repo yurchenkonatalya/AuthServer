@@ -101,6 +101,12 @@
             <artifactId>okhttp</artifactId>
             <version>${okhttp.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-plugin</artifactId>
+            <version>1.9.5.0</version>
+        </dependency>
     </dependencies>
 
     <build>

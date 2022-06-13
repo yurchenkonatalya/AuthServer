@@ -7,14 +7,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.*;
 import java.util.Date;
 
-@Getter
-@Setter
-@Builder
-@ToString
-@EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
+@MappedSuperclass
+@Data
 public class Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

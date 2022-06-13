@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class JwtUserDetalesService implements UserDetailsService {
+public class JwtUserDetailsService implements UserDetailsService {
     private final UserService userService;
 
     @Autowired
-    public JwtUserDetalesService(UserService userService){
+    public JwtUserDetailsService(UserService userService){
         this.userService = userService;
     }
     @Override

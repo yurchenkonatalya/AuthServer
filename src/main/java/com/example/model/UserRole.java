@@ -5,14 +5,8 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
-@Getter
-@Setter
-@Builder
-@ToString
-@EqualsAndHashCode
+@Data
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "roles")
 public class UserRole extends Base{
     @Column(name = "name")

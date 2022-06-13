@@ -21,10 +21,6 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
     }
-    @Override
-    public JwtDto auth(String token) {
-        return null;
-    }
 
     @Override
     public User findByUsername(String username) {
