@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/users/auth/")
@@ -40,17 +42,21 @@ public class AuthenticationRestController {
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto){
         try{
             String username = requestDto.getUsername();
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
-//            List roles = new ArrayList<>();
-//            roles.add("ADMIN");
-//            roles.add("USER");
-//            User user = new User("username", "1111", roles);
-            User user  = userService.findByUsername(username);
-            if(user == null){
-                throw new UsernameNotFoundException("User with user nsme: " + username + " not found ");
-            }
+//            User user  = userService.findByUsername(username);
+//            if(user == null){
+//                throw new UsernameNotFoundException("User with user nsme: " + username + " not found ");
+//            }
+            Hashtable<String, String> environment = new Hashtable<String, String>();
+            environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+            environment.put(Context.PROVIDER_URL, "ldap://ldap.forumsys.com:389");
+            environment.put(Context.SECURITY_AUTHENTICATION, "simple");
+            environment.put(Context.SECURITY_PRINCIPAL, username);
+            environment.put(Context.SECURITY_CREDENTIALS, requestDto.getPassword());
 
-            String token = jwtTokenProvider.createToken(username, user.getRoles());
+            DirContext context = new InitialDirContext(environment);
+
+            context.close();
+            String token = jwtTokenProvider.createToken(username, new ArrayList<>());
 
             Map<Object, Object> response = new HashMap<>();
             response.put("username", username);
@@ -58,6 +64,14 @@ public class AuthenticationRestController {
             return ResponseEntity.ok(response);
         }catch (AuthenticationException e){
             throw new BadCredentialsException("Invalid username or password");
+        } catch (NamingException e) {
+            Map<Object, Object> response = new HashMap<>();
+            response.put("username", requestDto.getUsername());
+            response.put("error", "incorrect login or password");
+            return ResponseEntity.badRequest().body(response);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
