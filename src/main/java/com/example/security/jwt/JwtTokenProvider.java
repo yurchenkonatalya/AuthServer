@@ -33,14 +33,14 @@ public class JwtTokenProvider {
     private Long validityInMilliseconds;
 
 
-    private KeyPairRsa keyPairRsa;
+    private KeyPairRsa keyPairRsa = new KeyPairRsa();
 
 
 
     @Autowired
     private UserDetailsService userDetailsService;
 
-    public JwtTokenProvider() throws NoSuchAlgorithmException, IOException {
+    public JwtTokenProvider() throws Exception {
     }
 
     public String createToken (String userName, Long id, String sid) throws NoSuchAlgorithmException {
