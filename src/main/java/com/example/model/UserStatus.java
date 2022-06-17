@@ -1,5 +1,5 @@
 package com.example.model;
 
-public enum UserStatus {
-    ACTIVE, NOT_ACTIVE, DELETED
-}
+//public enum UserStatus {
+//    ACTIVE, NOT_ACTIVE, DELETED
+//}

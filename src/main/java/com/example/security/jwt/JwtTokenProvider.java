@@ -1,6 +1,7 @@
 package com.example.security.jwt;
 
-import com.example.model.UserRole;
+import com.example.util.KeyPairRsa;
+import com.example.util.RsaKeyGenerator;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,10 +14,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,12 +32,21 @@ public class JwtTokenProvider {
     @Value("${jwt.token.expiration}")
     private Long validityInMilliseconds;
 
+
+    private KeyPairRsa keyPairRsa;
+
+
+
     @Autowired
     private UserDetailsService userDetailsService;
 
-    public String createToken (String userName, List<UserRole> roles) throws NoSuchAlgorithmException {
+    public JwtTokenProvider() throws NoSuchAlgorithmException, IOException {
+    }
+
+    public String createToken (String userName, Long id, String sid) throws NoSuchAlgorithmException {
         Claims claims  = Jwts.claims().setSubject(userName);
-        claims.put("roles", getRoleNames(roles));
+        claims.put("id", id);
+        claims.put("SID", sid);
 
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         generator.initialize(2048, new SecureRandom());
@@ -46,22 +59,18 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.RS256, pair.getPrivate())
+                .signWith(SignatureAlgorithm.RS256, keyPairRsa.getPrivateKey())
                 .compact();
     }
 
     public String getUsername(String token){
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(keyPairRsa.getPublicKey()).parseClaimsJws(token).getBody().getSubject();
     }
-    public boolean validateToken(String token){
-        try{
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+    public boolean validateToken(String token) throws InvalidKeySpecException, NoSuchAlgorithmException{
+            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(keyPairRsa.getPublicKey()).build().parseClaimsJws(token);
             if (claims.getBody().getExpiration().before(new Date()))
                 return false;
             return true;
-        }catch (JwtException | IllegalArgumentException e){
-            throw new JwtAuthenticationException("Jwt token is expired or invalid");
-        }
     }
 
     public String resolveToken(HttpServletRequest req){
@@ -75,13 +84,6 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token){
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-    private List<String> getRoleNames(List<UserRole> roles){
-        List<String> res = new ArrayList<>();
-        roles.forEach(role ->{
-            res.add(role.getName());
-        });
-        return res;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.example.security.jwt;
 
-import com.example.model.UserStatus;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -8,33 +8,31 @@ import java.util.Collection;
 
 public class JwtUser implements UserDetails {
 
-    private final String username;
-    private final String password;
-    private final Collection<? extends GrantedAuthority> authorities;
+    private final Long id;
 
     public JwtUser(
-            String username,
-            String password,
-            Collection<? extends GrantedAuthority> authorities
+            Long id
     ){
-        this.username = username;
-        this.password = password;
-        this.authorities = authorities;
+        this.id = id;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return null;
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return null;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
