@@ -1,20 +1,20 @@
 package com.example.model;
 
 import lombok.*;
-
-import javax.management.relation.Role;
 import javax.persistence.*;
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "objectSID")
+    @NotNull
+    @Column(name = "user_objectSID")
     private String objectSID;
 
 }

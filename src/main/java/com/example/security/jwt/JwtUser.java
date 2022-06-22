@@ -1,20 +1,16 @@
 package com.example.security.jwt;
 
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@Data
 public class JwtUser implements UserDetails {
 
-    private final Long id;
-
-    public JwtUser(
-            Long id
-    ){
-        this.id = id;
-    }
+    private final String objectSID;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -29,10 +25,6 @@ public class JwtUser implements UserDetails {
     @Override
     public String getUsername() {
         return null;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     @Override

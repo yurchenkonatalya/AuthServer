@@ -14,23 +14,21 @@ public class JwtTokenFilter extends GenericFilter {
     private final JwtTokenProvider tokenProvider;
 
     @Autowired
-    public JwtTokenFilter(JwtTokenProvider tokenProvider){
+    public JwtTokenFilter(JwtTokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
         String token = tokenProvider.resolveToken((HttpServletRequest) servletRequest);
         try {
-            if(token != null && tokenProvider.validateToken(token)){
-                Authentication authentication = tokenProvider .getAuthentication(token);
-                if(authentication != null){
+            if (token != null && tokenProvider.validateToken(token)) {
+                Authentication authentication = tokenProvider.getAuthentication(token);
+                if (authentication != null) {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         filterChain.doFilter(servletRequest, servletResponse);

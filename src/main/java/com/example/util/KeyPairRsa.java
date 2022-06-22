@@ -35,9 +35,7 @@ public class KeyPairRsa {
 
     private static PublicKey getPublicKey(String filename)
             throws Exception {
-
         byte[] keyBytes = Files.readAllBytes(Paths.get(filename));
-
         X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
         KeyFactory kf = KeyFactory.getInstance("RSA");
         return kf.generatePublic(spec);

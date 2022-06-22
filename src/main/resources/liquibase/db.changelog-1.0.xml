@@ -3,7 +3,6 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-
     <changeSet id="1.0.0" author="yurchenko">
         <createTable tableName="users">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -13,7 +12,6 @@
             <column name="objectSID" type="VARCHAR(100)">
                 <constraints nullable="false" unique="true"/>
             </column>
-
         </createTable>
     </changeSet>
 </databaseChangeLog>
