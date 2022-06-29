@@ -6,8 +6,10 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -21,16 +23,21 @@ public class KeyPairRsa {
         publicKey = getPublicKey("/Users/yurchenko/IdeaProjects/AuthServer/src/main/resources/public.txt");
     }
 
-    private PrivateKey getPrivateKey(String filename) throws Exception {
-        File f = new File(filename);
-        FileInputStream fis = new FileInputStream(f);
-        DataInputStream dis = new DataInputStream(fis);
-        byte[] keyBytes = new byte[(int) f.length()];
-        dis.readFully(keyBytes);
-        dis.close();
-        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        return kf.generatePrivate(spec);
+    private PrivateKey getPrivateKey(String filename){
+        try {
+            File f = new File(filename);
+            FileInputStream fis = new FileInputStream(f);
+            DataInputStream dis = new DataInputStream(fis);
+            byte[] keyBytes = new byte[(int) f.length()];
+            dis.readFully(keyBytes);
+            dis.close();
+            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return kf.generatePrivate(spec);
+        } catch(NoSuchAlgorithmException | IOException | InvalidKeySpecException e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private static PublicKey getPublicKey(String filename)

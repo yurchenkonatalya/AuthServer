@@ -16,8 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-import static com.example.constant.ApiPath.IS_TOKEN_VALID_ENDPOINT;
-import static com.example.constant.ApiPath.LOGIN_ENDPOINT;
+import static com.example.constant.ApiPath.*;
 import static org.springframework.security.authorization.AuthenticatedAuthorizationManager.authenticated;
 
 @Configuration
@@ -41,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(LOGIN_ENDPOINT, IS_TOKEN_VALID_ENDPOINT).permitAll()
+                .antMatchers(LOGIN_ENDPOINT, IS_TOKEN_VALID_ENDPOINT, CHECK_TOKEN).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

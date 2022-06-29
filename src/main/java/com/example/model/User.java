@@ -10,11 +10,10 @@ import javax.validation.constraints.NotNull;
 public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "id")
     private Long id;
 
     @NotNull
-    @Column(name = "user_objectSID")
+    @Column(name = "objectSID")
     private String objectSID;
-
 }

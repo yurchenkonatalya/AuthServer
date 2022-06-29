@@ -2,6 +2,7 @@ package com.example.security.jwt;
 
 import com.example.util.KeyPairRsa;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +20,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtTokenProvider {
     @Value("${jwt.token.expiration}")
     private Long validityInMilliseconds;
@@ -31,14 +33,14 @@ public class JwtTokenProvider {
         this.userDetailsService = userDetailsService;
     }
 
-    public String createToken(String userName, Long id, String sid) throws NoSuchAlgorithmException {
+    public String createToken(String userName, Long id, String sid) {
         Claims claims = Jwts.claims().setSubject(userName);
         claims.put("id", id);
         claims.put("SID", sid);
 
-        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-        generator.initialize(2048, new SecureRandom());
-        KeyPair pair = generator.generateKeyPair();
+//        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+//        generator.initialize(2048, new SecureRandom());
+//        KeyPair pair = generator.generateKeyPair();
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
@@ -55,9 +57,18 @@ public class JwtTokenProvider {
         return Jwts.parserBuilder().setSigningKey(keyPairRsa.getPublicKey()).build().parseClaimsJws(token).getBody().getSubject();
     }
 
-    public boolean validateToken(String token) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(keyPairRsa.getPublicKey()).build().parseClaimsJws(token);
-        return !claims.getBody().getExpiration().before(new Date());
+    public boolean validateToken(String token) {
+        log.warn("qqqqqqq");
+        try {
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(keyPairRsa.getPublicKey())
+                    .build()
+                    .parseClaimsJws(token);
+            log.warn(claims.toString());
+            return !claims.getBody().getExpiration().before(new Date());
+        }catch (Exception e){
+            return false;
+        }
     }
 
     public String resolveToken(HttpServletRequest req) {

@@ -2,46 +2,48 @@ package com.example.rest;
 
 import com.example.dto.AuthenticationRequestDto;
 import com.example.dto.JwtDto;
-import com.example.security.jwt.JwtTokenProvider;
+import com.example.dto.ValidDto;
 import com.example.service.UserService;
-import com.example.util.RsaKeyGenerator;
-import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.WinNT;
-import org.apache.catalina.util.ToStringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.naming.NamingException;
-import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @RestController
 @RequestMapping(value = "/api/users/auth/")
+@Slf4j
+@CrossOrigin(origins = "http://localhost:63342")
 public class AuthenticationRestController {
     private final UserService userService;
 
     @Autowired
     public AuthenticationRestController(UserService userService) {
         this.userService = userService;
-
     }
 
     @PostMapping("login")
-    public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) throws NamingException, NoSuchAlgorithmException {
+    public ResponseEntity<JwtDto> login(@RequestBody AuthenticationRequestDto requestDto) throws NamingException, NoSuchAlgorithmException {
+        log.error(requestDto.getUsername());
         return userService.login(requestDto);
+//        return ResponseEntity.ok(new JwtDto("oklknkml", "200nklm"));
     }
 
     @PostMapping("isTokenValid")
     public ResponseEntity isTokenValid(@RequestBody JwtDto requestDto) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        log.error(requestDto.getUsername());
         return userService.isTokenValid(requestDto);
+    }
+
+    @GetMapping("checkToken")
+    public ResponseEntity checkToken(@RequestParam String token) {
+        log.error(userService.checkToken(token).getBody().toString());
+        return userService.checkToken(token);
     }
 }
 
